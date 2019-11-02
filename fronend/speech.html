@@ -1,89 +1,160 @@
 <html>
 <head>
    <title>Speech SDK JavaScript Quickstart</title>
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.1/bootstrap-table.min.css">
 </head>
 <body>
  <!-- UI code goes here -->
- <h1>hello please tell me the database to select </h1> 
- <button id="startRecognizeOnceAsyncButton">Speak</button>
- 
- <h1> Results</h1>
- <textarea id="phraseDiv" style="display: inline-block;width:500px;height:200px"></textarea>
- <!-- SDK reference goes here -->
-
- <!-- Optional authorization token request goes here -->
-
- <!-- Sample code goes here -->
+ <div class="container">
+    <section class="jumbotron text-center bg-transparent" style="padding:25;">
+      <p class="jumbotron-heading">Speak to get you results: </p>
+      <a id="startRecognizeOnceAsyncButton" href="#" class="btn btn-raised btn-primary my-2">Speak</a>
+    </section>
+    <h3 style="margin-top: -1.5%;"> Results</h3>
+    <!--<textarea id="phraseDiv" style="display: inline-block;width:500px;height:200px"></textarea>-->
+    <table id="datatable" data-height="460">
+    </table>
+  </div>
  <script src="./SpeechSDK-JavaScript-1.7.0/microsoft.cognitiveservices.speech.sdk.bundle.js"></script>
- <script
-  src="https://code.jquery.com/jquery-3.4.1.min.js"
-  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-  crossorigin="anonymous"></script>
+ <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.1/bootstrap-table.min.js"></script>
+ <script src="speechToText.js"></script>
  <script>
-    // status fields and start button in UI
-    var phraseDiv;
-    var startRecognizeOnceAsyncButton;
-  
-    // subscription key and region for speech services.
-    var subscriptionKey, serviceRegion;
-    var authorizationToken;
-    var SpeechSDK;
-    var recognizer;
-    // wss://eastus.stt.speech.microsoft.com/speech/recognition/interactive/cognitiveservices/v1?language=en-US&format=simple&Ocp-Apim-Subscription-Key=5ddec480deda4a3ea442cdd812bf429a&X-ConnectionId=34BAA660F48F46A793BF6F9F6A10BF8B
-    // https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/274b0beb-01bd-4fb0-b8c8-4d63d5cbeba1?staging=true&verbose=true&timezoneOffset=-360&subscription-key=5ddec480deda4a3ea442cdd812bf429a&q=fetch 
-    document.addEventListener("DOMContentLoaded", function () {
-      startRecognizeOnceAsyncButton = document.getElementById("startRecognizeOnceAsyncButton");
-      subscriptionKey = "7d20015ea7c94687883a3e49d3cfdbf1";
-      serviceRegion = "westus";
-      phraseDiv = document.getElementById("phraseDiv");
-  
-      startRecognizeOnceAsyncButton.addEventListener("click", function () {
-        startRecognizeOnceAsyncButton.disabled = true;
-        phraseDiv.innerHTML = "";
-  
-        // if we got an authorization token, use the token. Otherwise use the provided subscription key
-        var speechConfig;
-        speechConfig = SpeechSDK.SpeechConfig.fromSubscription(subscriptionKey, serviceRegion);
-        
-  
-        speechConfig.speechRecognitionLanguage = "en-US";
-        var audioConfig  = SpeechSDK.AudioConfig.fromDefaultMicrophoneInput();
-        recognizer = new SpeechSDK.SpeechRecognizer(speechConfig, audioConfig);
-  
-        recognizer.recognizeOnceAsync(
-          function (result) {
-            startRecognizeOnceAsyncButton.disabled = false;
-            phraseDiv.innerHTML += result.text;
-            $.getJSON( "https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/274b0beb-01bd-4fb0-b8c8-4d63d5cbeba1?staging=true&verbose=true&timezoneOffset=-360&subscription-key=5ddec480deda4a3ea442cdd812bf429a&q=" + result.text, function( data ) {
-              var items = [];
-              
-            });
-            
-  
-            recognizer.close();
-            recognizer = undefined;
-          },
-          function (err) {
-            startRecognizeOnceAsyncButton.disabled = false;
-            phraseDiv.innerHTML += err;
-            window.console.log(err);
-  
-            recognizer.close();
-            recognizer = undefined;
-          });
-      });
-  
-      if (!window.SpeechSDK) {
-        SpeechSDK = window.SpeechSDK;
-        startRecognizeOnceAsyncButton.disabled = false;
-  
-  
-        // in case we have a function for getting an authorization token, call it.
-        if (typeof RequestAuthorizationToken === "function") {
-            RequestAuthorizationToken();
-        }
-      }
-    });
-  </script>
+   var $table = $('#table');
+    var mydata = 
+[
+    {
+        "id": 0,
+        "name": "test0",
+        "price": "$0"
+    },
+    {
+        "id": 1,
+        "name": "test1",
+        "price": "$1"
+    },
+    {
+        "id": 2,
+        "name": "test2",
+        "price": "$2"
+    },
+    {
+        "id": 3,
+        "name": "test3",
+        "price": "$3"
+    },
+    {
+        "id": 4,
+        "name": "test4",
+        "price": "$4"
+    },
+    {
+        "id": 5,
+        "name": "test5",
+        "price": "$5"
+    },
+    {
+        "id": 6,
+        "name": "test6",
+        "price": "$6"
+    },
+    {
+        "id": 7,
+        "name": "test7",
+        "price": "$7"
+    },
+    {
+        "id": 8,
+        "name": "test8",
+        "price": "$8"
+    },
+    {
+        "id": 9,
+        "name": "test9",
+        "price": "$9"
+    },
+    {
+        "id": 10,
+        "name": "test10",
+        "price": "$10"
+    },
+    {
+        "id": 11,
+        "name": "test11",
+        "price": "$11"
+    },
+    {
+        "id": 12,
+        "name": "test12",
+        "price": "$12"
+    },
+    {
+        "id": 13,
+        "name": "test13",
+        "price": "$13"
+    },
+    {
+        "id": 14,
+        "name": "test14",
+        "price": "$14"
+    },
+    {
+        "id": 15,
+        "name": "test15",
+        "price": "$15"
+    },
+    {
+        "id": 16,
+        "name": "test16",
+        "price": "$16"
+    },
+    {
+        "id": 17,
+        "name": "test17",
+        "price": "$17"
+    },
+    {
+        "id": 18,
+        "name": "test18",
+        "price": "$18"
+    },
+    {
+        "id": 19,
+        "name": "test19",
+        "price": "$19"
+    },
+    {
+        "id": 20,
+        "name": "test20",
+        "price": "$20"
+    }
+];
+
+$(function () {
+    $('#datatable').bootstrapTable({
+    striped: true,
+    pagination: true,
+    showColumns: true,
+    showToggle: true,
+    showExport: true,
+    sortable: true,
+    columns: [{
+        title: 'ID',
+        field: 'id'
+      }, {
+        title: 'Item Name',
+        field: 'name'
+      }, {
+        title: 'Item Price',
+        field: 'price'
+      }],
+    data: mydata, 
+  });
+});
+
+
+ </script>
 </body>
 </html>
