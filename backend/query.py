@@ -5,7 +5,9 @@ import json
 from decimal import Decimal
 class Query(Resource):
     def post(self):
+        print(request)
         jsonData = request.json
+        print(jsonData)
         topIntent = jsonData['topScoringIntent']['intent']
         entities = jsonData['entities']
 
