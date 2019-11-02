@@ -32,9 +32,44 @@ document.addEventListener("DOMContentLoaded", function () {
       function (result) {
         startRecognizeOnceAsyncButton.disabled = false;
         phraseDiv.innerHTML += result.text;
-        $.getJSON( "https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/274b0beb-01bd-4fb0-b8c8-4d63d5cbeba1?staging=true&verbose=true&timezoneOffset=-360&subscription-key=5ddec480deda4a3ea442cdd812bf429a&q=" + result.text, function( data ) {
-          var items = [];
-
+        $.getJSON( "https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/274b0beb-01bd-4fb0-b8c8-4d63d5cbeba1?staging=true&verbose=true&timezoneOffset=-360&subscription-key=5ddec480deda4a3ea442cdd812bf429a&q=" + result.text.substring(0, result.text.length-1), 
+        function( data ) {
+          data = JSON.stringify(data); 
+          $.ajax({
+            type: "POST",
+            url: "http://localhost:5000/query",
+            data: data,    
+            crossOrigin: false,
+            dataType:'json',
+            contentType: "application/json; charset=utf-8",
+            success: function(queryData){
+                if(queryData.data) {
+                $('#datatable').bootstrapTable({
+                    striped: true,
+                    pagination: true,
+                    showColumns: true,
+                    showToggle: true,
+                    showExport: true,
+                    sortable: true,
+                    columns: [{
+                        title: 'ID',
+                        field: 'id'
+                      }, {
+                        title: 'Item Name',
+                        field: 'name'
+                      }, {
+                        title: 'Item Price',
+                        field: 'price'
+                      }],
+                    data: queryData.data, 
+                  });
+                }
+                else {
+                    $('#datatable').text(queryData.query);
+                }
+            },
+          });
+          
         });
         
 
