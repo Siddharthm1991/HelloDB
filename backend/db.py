@@ -20,3 +20,8 @@ def getDBConn():
         else:
             print(err)
         return null
+def execQuery(cnx, query):
+    cursor = cnx.cursor()
+    cursor.execute(query)
+    return cursor
+
