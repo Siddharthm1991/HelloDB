@@ -1,4 +1,5 @@
 // status fields and start button in UI
+var table;
 var phraseDiv;
 var startRecognizeOnceAsyncButton;
 
@@ -13,11 +14,11 @@ document.addEventListener("DOMContentLoaded", function () {
   startRecognizeOnceAsyncButton = document.getElementById("startRecognizeOnceAsyncButton");
   subscriptionKey = "7d20015ea7c94687883a3e49d3cfdbf1";
   serviceRegion = "westus";
-  phraseDiv = document.getElementById("phraseDiv");
+  // phraseDiv = document.getElementById("phraseDiv");
 
   startRecognizeOnceAsyncButton.addEventListener("click", function () {
     startRecognizeOnceAsyncButton.disabled = true;
-    phraseDiv.innerHTML = "";
+    // phraseDiv.innerHTML = "";
 
     // if we got an authorization token, use the token. Otherwise use the provided subscription key
     var speechConfig;
@@ -31,7 +32,8 @@ document.addEventListener("DOMContentLoaded", function () {
     recognizer.recognizeOnceAsync(
       function (result) {
         startRecognizeOnceAsyncButton.disabled = false;
-        phraseDiv.innerHTML += result.text;
+        // phraseDiv.innerHTML += result.text;
+        $('#datatable').bootstrapTable('destroy');
         $.getJSON( "https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/274b0beb-01bd-4fb0-b8c8-4d63d5cbeba1?staging=true&verbose=true&timezoneOffset=-360&subscription-key=5ddec480deda4a3ea442cdd812bf429a&q=" + result.text.substring(0, result.text.length-1), 
         function( data ) {
           data = JSON.stringify(data); 
@@ -44,6 +46,11 @@ document.addEventListener("DOMContentLoaded", function () {
             contentType: "application/json; charset=utf-8",
             success: function(queryData){
                 if(queryData.data) {
+                  columns=[];
+                  for(var key in queryData.data[0]){
+                    columns.push({title: key, field:key});
+                  }
+                  console.log(columns);
                 $('#datatable').bootstrapTable({
                     striped: true,
                     pagination: true,
@@ -51,16 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     showToggle: true,
                     showExport: true,
                     sortable: true,
-                    columns: [{
-                        title: 'ID',
-                        field: 'id'
-                      }, {
-                        title: 'Item Name',
-                        field: 'name'
-                      }, {
-                        title: 'Item Price',
-                        field: 'price'
-                      }],
+                    columns: columns,
                     data: queryData.data, 
                   });
                 }
@@ -78,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
       },
       function (err) {
         startRecognizeOnceAsyncButton.disabled = false;
-        phraseDiv.innerHTML += err;
+        // phraseDiv.innerHTML += err;
         window.console.log(err);
 
         recognizer.close();
