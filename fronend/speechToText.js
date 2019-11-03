@@ -14,8 +14,6 @@ document.addEventListener("DOMContentLoaded", function () {
   startRecognizeOnceAsyncButton = document.getElementById("startRecognizeOnceAsyncButton");
   subscriptionKey = "7d20015ea7c94687883a3e49d3cfdbf1";
   serviceRegion = "westus";
-  // phraseDiv = document.getElementById("phraseDiv");
-
   startRecognizeOnceAsyncButton.addEventListener("click", function () {
     startRecognizeOnceAsyncButton.disabled = true;
     // phraseDiv.innerHTML = "";
@@ -45,22 +43,26 @@ document.addEventListener("DOMContentLoaded", function () {
             dataType:'json',
             contentType: "application/json; charset=utf-8",
             success: function(queryData){
+                if(queryData.query) {
+                    document.getElementById("query").style.display="block";
+                    document.getElementById("staticQuery").value = queryData.query;
+                }
                 if(queryData.data) {
-                  columns=[];
-                  for(var key in queryData.data[0]){
-                    columns.push({title: key, field:key});
-                  }
-                  console.log(columns);
-                $('#datatable').bootstrapTable({
-                    striped: true,
-                    pagination: true,
-                    showColumns: true,
-                    showToggle: true,
-                    showExport: true,
-                    sortable: true,
-                    columns: columns,
-                    data: queryData.data, 
-                  });
+                    columns=[];
+                    for(var key in queryData.data[0]){
+                        columns.push({title: key, field:key});
+                    }
+                    console.log(columns);
+                    $('#datatable').bootstrapTable({
+                        striped: true,
+                        pagination: true,
+                        showColumns: true,
+                        showToggle: true,
+                        showExport: true,
+                        sortable: true,
+                        columns: columns,
+                        data: queryData.data, 
+                    });
                 }
                 else {
                     $('#datatable').text(queryData.query);
